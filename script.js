@@ -60,8 +60,18 @@ function saveStorage(key, value) {
   } catch (e) {}
 }
 
+const customEvents = loadStorage("cc_custom_events", []);
+customEvents.forEach(ev => {
+  if (!events.some(x => x.id === ev.id)) events.unshift(ev);
+});
+const customNotices = loadStorage("cc_custom_notices", []);
+customNotices.forEach(no => {
+  if (!notices.some(x => x.id === no.id)) notices.unshift(no);
+});
+
 const registered = new Set(loadStorage("cc_registered", [1]));
 const joinedClubIds = new Set(loadStorage("cc_clubs", [0]));
+let darkMode = loadStorage("cc_dark_mode", false);
 let profile = loadStorage("cc_profile", {
   name: "Pragya Kumar",
   dept: "Computer Science & Engineering",
@@ -556,3 +566,120 @@ document.addEventListener("keydown", e => {
 });
 
 renderDashboard();
+function applyTheme() {
+  document.body.classList.toggle("dark-mode", Boolean(darkMode));
+  const btn = $("#themeToggleBtn");
+  if (btn) btn.textContent = darkMode ? "☀" : "☾";
+}
+applyTheme();
+
+$("#themeToggleBtn").addEventListener("click", () => {
+  darkMode = !darkMode;
+  saveStorage("cc_dark_mode", darkMode);
+  applyTheme();
+  toast(darkMode ? "Dark mode enabled" : "Light mode enabled");
+});
+
+$("#addEventBtn").addEventListener("click", () => {
+  openModal(
+    "Create campus event",
+    "Add a new activity or workshop to the campus calendar.",
+    `<input class="modal-field" id="newEvTitle" placeholder="Event title (e.g. AI Hackathon 2026)">
+     <div class="modal-row">
+       <select class="modal-field" id="newEvCat">
+         <option value="TECH">TECH</option>
+         <option value="CULTURAL">CULTURAL</option>
+         <option value="WORKSHOP">WORKSHOP</option>
+         <option value="SPORTS">SPORTS</option>
+         <option value="INNOVATION">INNOVATION</option>
+         <option value="COMMUNITY">COMMUNITY</option>
+       </select>
+       <input class="modal-field" id="newEvTime" value="3:00 PM" placeholder="Time (e.g. 3:00 PM)">
+     </div>
+     <div class="modal-row">
+       <input class="modal-field" id="newEvDay" value="26" placeholder="Day (e.g. 26)">
+       <input class="modal-field" id="newEvMonth" value="NOV" placeholder="Month (e.g. NOV)">
+     </div>
+     <input class="modal-field" id="newEvVenue" placeholder="Venue (e.g. Seminar Hall 1)">
+     <textarea class="modal-field" id="newEvDesc" rows="2" placeholder="Short description of the event..."></textarea>`,
+    "Publish event",
+    () => {
+      const title = $("#newEvTitle").value.trim();
+      const category = $("#newEvCat").value;
+      const time = $("#newEvTime").value.trim() || "4:00 PM";
+      const day = ($("#newEvDay").value.trim() || "28").padStart(2, "0").slice(0, 2);
+      const month = ($("#newEvMonth").value.trim() || "NOV").toUpperCase().slice(0, 3);
+      const venue = $("#newEvVenue").value.trim() || "Main Auditorium";
+      const desc = $("#newEvDesc").value.trim() || "Student-organized campus activity open to all departments.";
+      if (!title) {
+        toast("Please enter an event title.");
+        return;
+      }
+      const newEvent = {
+        id: Date.now(),
+        title,
+        category,
+        day,
+        month,
+        date: `${Number(day)} ${month.charAt(0) + month.slice(1).toLowerCase()} 2026`,
+        time,
+        venue,
+        desc
+      };
+      events.unshift(newEvent);
+      customEvents.unshift(newEvent);
+      saveStorage("cc_custom_events", customEvents);
+      $("#eventCount").textContent = String(events.length).padStart(2, "0");
+      activeEventCategory = "ALL";
+      renderEventFilters();
+      renderEvents();
+      toast(`Published "${title}" to Upcoming Events!`);
+    },
+    "NEW CAMPUS EVENT"
+  );
+});
+
+$("#addNoticeBtn").addEventListener("click", () => {
+  openModal(
+    "Post campus notice",
+    "Share an official announcement or deadline with students.",
+    `<input class="modal-field" id="newNoTitle" placeholder="Notice headline (e.g. Mid-Semester Exam Schedule)">
+     <div class="modal-row">
+       <select class="modal-field" id="newNoPri">
+         <option value="IMPORTANT">IMPORTANT</option>
+         <option value="UPDATE">UPDATE</option>
+         <option value="DEADLINE">DEADLINE</option>
+       </select>
+       <input class="modal-field" id="newNoDept" value="Academics" placeholder="Issued by (e.g. Academics)">
+     </div>
+     <textarea class="modal-field" id="newNoDesc" rows="3" placeholder="Write the full announcement details..."></textarea>`,
+    "Post announcement",
+    () => {
+      const title = $("#newNoTitle").value.trim();
+      const priority = $("#newNoPri").value;
+      const issuer = $("#newNoDept").value.trim() || "Campus Admin";
+      const desc = $("#newNoDesc").value.trim() || "Please check with your department coordinator for complete details.";
+      if (!title) {
+        toast("Please enter a notice headline.");
+        return;
+      }
+      const newNotice = {
+        id: Date.now(),
+        title,
+        desc,
+        date: `Just now · ${issuer}`,
+        priority
+      };
+      notices.unshift(newNotice);
+      customNotices.unshift(newNotice);
+      saveStorage("cc_custom_notices", customNotices);
+      $("#noticeCount").textContent = String(notices.length).padStart(2, "0");
+      $("#navNoticeBadge").textContent = String(notices.length);
+      activeNoticePriority = "ALL";
+      renderNoticeFilters();
+      renderNotices();
+      toast("Notice posted to Campus Bulletin!");
+    },
+    "CAMPUS BULLETIN"
+  );
+});

@@ -51,6 +51,7 @@
         <div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">Overview</strong></div>
         <div class="top-actions">
           <label class="global-search"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search events, notices, clubs, faculty..." /><kbd>⌘ K</kbd></label>
+          <button class="theme-toggle" id="themeToggleBtn" type="button" aria-label="Toggle dark mode" title="Switch theme">☾</button>
           <button class="icon-button" id="notificationBtn" type="button" aria-label="Notifications">♧<i></i></button>
           <button class="top-avatar" id="topAvatarBtn" type="button" aria-label="Go to My Dashboard">PK</button>
         </div>
@@ -107,7 +108,10 @@
           <section class="panel events-panel" id="events">
             <div class="panel-heading">
               <div><span class="eyebrow">DON'T MISS OUT</span><h2>Upcoming events</h2></div>
-              <a href="#events" class="subtle-link" id="viewAllEvents">View calendar <span>→</span></a>
+              <div class="panel-actions">
+                <button class="mini-action-btn" id="addEventBtn" type="button">+ Add event</button>
+                <a href="#events" class="subtle-link" id="viewAllEvents">View calendar <span>→</span></a>
+              </div>
             </div>
             <div class="filter-bar" id="eventFilters" role="tablist" aria-label="Filter events by category"></div>
             <div class="event-list" id="eventList"></div>
@@ -116,7 +120,10 @@
           <section class="panel notice-panel" id="notices">
             <div class="panel-heading">
               <div><span class="eyebrow">CAMPUS BULLETIN</span><h2>Latest notices</h2></div>
-              <a href="#notices" class="subtle-link" id="viewAllNotices">All notices <span>→</span></a>
+              <div class="panel-actions">
+                <button class="mini-action-btn" id="addNoticeBtn" type="button">+ Post notice</button>
+                <a href="#notices" class="subtle-link" id="viewAllNotices">All notices <span>→</span></a>
+              </div>
             </div>
             <div class="filter-bar" id="noticeFilters" role="tablist" aria-label="Filter notices by priority"></div>
             <div class="notice-list" id="noticeList"></div>

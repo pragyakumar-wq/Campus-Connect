@@ -161,3 +161,28 @@ footer{display:flex;justify-content:space-between;gap:10px;padding:27px 0 20px;c
 @media(max-width:1100px){.main-content{padding:0 25px;margin-left:225px}.topbar{margin:0 -25px;padding:0 25px}.sidebar{width:225px}.content-grid,.dashboard-grid{grid-template-columns:1fr}.club-grid,.faculty-grid{grid-template-columns:repeat(2,1fr)}.college-info-bar{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.sidebar{transform:translateX(-100%);transition:.25s;width:260px;box-shadow:10px 0 35px #11182718}.sidebar.open{transform:translateX(0)}.main-content{margin:0;padding:0 16px}.topbar{margin:0 -16px;padding:0 16px;height:64px}.mobile-menu{display:block}.breadcrumb{margin-right:auto;margin-left:10px}.global-search{width:150px;padding:0 9px}.global-search kbd{display:none}.top-actions{gap:10px}.welcome-row{align-items:flex-start;gap:10px;flex-direction:column}.welcome-row h1{font-size:24px}.date-chip{align-self:flex-end;margin-top:-7px}.hero-banner{height:auto;min-height:250px;padding:24px}.hero-copy{max-width:75%}.hero-copy h2{font-size:27px}.hero-art{right:-18%;width:60%;opacity:.75}.floating-note{display:none}.stats-grid,.college-info-bar{grid-template-columns:repeat(2,1fr);gap:9px}.stat-card{padding:12px;min-height:105px}.content-grid,.dashboard-grid{grid-template-columns:1fr}.panel{padding:15px}.club-grid,.faculty-grid,.department-grid{grid-template-columns:repeat(2,1fr)}.event-category{display:none}footer{flex-wrap:wrap}.dashboard-profile{flex-wrap:wrap}.dashboard-profile .outline-button{margin-left:0}}
 @media(max-width:420px){.hero-art{opacity:.25}.hero-copy{max-width:100%}.department-grid,.club-grid,.faculty-grid,.college-info-bar{grid-template-columns:1fr}.top-avatar{display:none}}
+.panel-actions{display:flex;align-items:center;gap:10px}
+.mini-action-btn{border:1px solid #e3dcff;background:#f5f2ff;color:var(--purple);border-radius:6px;padding:5px 9px;font:700 10px "DM Sans";cursor:pointer;transition:.15s}
+.mini-action-btn:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
+.theme-toggle{width:33px;height:33px;border-radius:8px;border:1px solid var(--line);background:#f7f8fb;color:var(--ink);font-size:15px;display:grid;place-items:center;cursor:pointer;transition:.2s}
+.theme-toggle:hover{border-color:#d9d0ff;color:var(--purple)}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+body.dark-mode{--ink:#eef2ff;--muted:#94a3b8;--line:#26324d;--bg:#0b1120}
+body.dark-mode .sidebar,body.dark-mode .stat-card,body.dark-mode .panel,body.dark-mode .college-info-bar,body.dark-mode .date-chip,body.dark-mode .club-card,body.dark-mode .faculty-card,body.dark-mode .department-item,body.dark-mode .outline-button,body.dark-mode .theme-toggle{background:#131c31;border-color:#26324d;color:var(--ink)}
+body.dark-mode .topbar{background:#131c31d9;border-color:#26324d}
+body.dark-mode .breadcrumb strong,body.dark-mode .info-pill strong,body.dark-mode .department-item strong{color:#f8fafc}
+body.dark-mode .info-pill,body.dark-mode .nav-link{color:#cbd5e1}
+body.dark-mode .nav-link:hover,body.dark-mode .nav-link.active{background:#231d47;color:#c4b5fd}
+body.dark-mode .global-search{background:#0f172a;border-color:#26324d;color:#94a3b8}
+body.dark-mode kbd{background:#1e293b;border-color:#334155;color:#cbd5e1}
+body.dark-mode .help-card{background:#1b1838;border-color:#2e2759}
+body.dark-mode .help-card p{color:#a5b4fc}
+body.dark-mode .filter-chip{background:#1e293b;border-color:#334155;color:#cbd5e1}
+body.dark-mode .filter-chip:hover,body.dark-mode .filter-chip.active{background:var(--purple);color:#fff;border-color:var(--purple)}
+body.dark-mode .event-item,body.dark-mode .notice-item{border-color:#26324d}
+body.dark-mode .register-btn{background:#1e293b;border-color:#334155;color:#c4b5fd}
+body.dark-mode .register-btn.registered{background:#0f2e24;border-color:#1b4d3e;color:#6ee7b7}
+body.dark-mode .mini-action-btn{background:#231d47;border-color:#3b2d72;color:#c4b5fd}
+body.dark-mode .mini-action-btn:hover{background:var(--purple);color:#fff}
+body.dark-mode .modal{background:#131c31;color:#f8fafc;border:1px solid #26324d}
+body.dark-mode .modal-field{background:#0f172a;border-color:#334155;color:#f8fafc}
