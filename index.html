@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10172a" />
+  <title>CampusConnect | Your Campus, One Place</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#home" aria-label="CampusConnect home">
+        <span class="brand-mark">C<span>+</span></span>
+        <span>campus<span class="brand-light">connect</span></span>
+      </a>
+      <div class="side-label">WORKSPACE</div>
+      <nav class="side-nav">
+        <a class="nav-link active" href="#home" data-section="home"><span>⌂</span> Overview</a>
+        <a class="nav-link" href="#notices" data-section="notices"><span>▤</span> Notices <i class="nav-count" id="navNoticeBadge">4</i></a>
+        <a class="nav-link" href="#events" data-section="events"><span>▦</span> Events</a>
+        <a class="nav-link" href="#clubs" data-section="clubs"><span>◈</span> Clubs & Societies</a>
+        <a class="nav-link" href="#faculty" data-section="faculty"><span>✦</span> Faculty</a>
+        <a class="nav-link" href="#departments" data-section="departments"><span>▥</span> Departments</a>
+      </nav>
+      <div class="side-label side-label-lower">PERSONAL</div>
+      <nav class="side-nav">
+        <a class="nav-link" href="#dashboard" data-section="dashboard"><span>◉</span> My Dashboard</a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card">
+          <div class="help-icon">✦</div>
+          <strong>Have an idea?</strong>
+          <p>Help make campus life better for everyone.</p>
+          <button class="text-button" id="suggestBtn" type="button">Share feedback <span>→</span></button>
+        </div>
+        <button class="profile-mini" id="sidebarProfileBtn" type="button" aria-label="Open My Dashboard">
+          <div class="avatar" id="sideAvatar">PK</div>
+          <div><strong id="sideStudentName">Pragya Kumar</strong><small id="sideStudentRole">Student account</small></div>
+          <span class="dots">•••</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="menuBtn" type="button" aria-label="Open menu">☰</button>
+        <div class="breadcrumb">Workspace <span>/</span> <strong id="crumb">Overview</strong></div>
+        <div class="top-actions">
+          <label class="global-search"><span>⌕</span><input id="globalSearch" type="search" placeholder="Search events, notices, clubs, faculty..." /><kbd>⌘ K</kbd></label>
+          <button class="icon-button" id="notificationBtn" type="button" aria-label="Notifications">♧<i></i></button>
+          <button class="top-avatar" id="topAvatarBtn" type="button" aria-label="Go to My Dashboard">PK</button>
+        </div>
+      </header>
+
+      <section class="page-section" id="home">
+        <div class="welcome-row">
+          <div>
+            <div class="eyebrow"><span class="live-dot"></span> YOUR CAMPUS, CONNECTED</div>
+            <h1>Good morning, <span id="welcomeName">Pragya</span> <span class="wave">✦</span></h1>
+            <p class="muted">Everything happening around your campus, all in one place.</p>
+          </div>
+          <div class="date-chip"><span>▦</span><span id="todayDate">Today</span></div>
+        </div>
+
+        <div class="hero-banner">
+          <div class="hero-copy">
+            <span class="hero-tag">CAMPUS HIGHLIGHT · AARAV INSTITUTE OF TECHNOLOGY</span>
+            <h2>Big ideas.<br><em>Bright futures.</em></h2>
+            <p>Discover opportunities, meet your people and make your campus experience count.</p>
+            <div class="hero-actions">
+              <a class="primary-button" href="#events">Explore events <span>↗</span></a>
+              <button class="hero-secondary-btn" id="collegeInfoBtn" type="button">Campus Guide & Info</button>
+            </div>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+            <div class="hero-spark spark-one">✦</div><div class="hero-spark spark-two">✧</div>
+            <div class="hero-glass"><span>✳</span><b>CREATE</b><small>YOUR MOMENT</small></div>
+            <div class="floating-note note-one">Ideas happen here ↗</div>
+            <div class="floating-note note-two">#CampusLife</div>
+          </div>
+        </div>
+
+        <div class="college-info-bar" id="collegeInfo">
+          <div class="info-pill"><strong>🏛 Campus Hours:</strong> Mon–Sat, 8:00 AM – 8:00 PM</div>
+          <div class="info-pill"><strong>📚 Central Library:</strong> Open till 8:00 PM (Digital Lab 24×7)</div>
+          <div class="info-pill"><strong>📍 Location:</strong> Main Knowledge Park, Block A–F</div>
+          <div class="info-pill"><strong>☎ Helpdesk:</strong> helpdesk@campusconnect.edu</div>
+        </div>
+
+        <div class="section-heading">
+          <div><span class="eyebrow">AT A GLANCE</span><h2>Campus snapshot</h2></div>
+          <span class="updated">Updated just now <span class="live-dot"></span></span>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Upcoming events</span><span class="stat-icon purple">▦</span></div><strong id="eventCount">06</strong><small><b>+2</b> this month</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Active clubs</span><span class="stat-icon orange">◈</span></div><strong id="clubCount">08</strong><small>Find your community</small></article>
+          <article class="stat-card"><div class="stat-top"><span>New notices</span><span class="stat-icon green">▤</span></div><strong id="noticeCount">04</strong><small>Stay in the loop</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Departments & Faculty</span><span class="stat-icon blue">▥</span></div><strong id="deptCount">06</strong><small>Explore academics</small></article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel events-panel" id="events">
+            <div class="panel-heading">
+              <div><span class="eyebrow">DON'T MISS OUT</span><h2>Upcoming events</h2></div>
+              <a href="#events" class="subtle-link" id="viewAllEvents">View calendar <span>→</span></a>
+            </div>
+            <div class="filter-bar" id="eventFilters" role="tablist" aria-label="Filter events by category"></div>
+            <div class="event-list" id="eventList"></div>
+          </section>
+
+          <section class="panel notice-panel" id="notices">
+            <div class="panel-heading">
+              <div><span class="eyebrow">CAMPUS BULLETIN</span><h2>Latest notices</h2></div>
+              <a href="#notices" class="subtle-link" id="viewAllNotices">All notices <span>→</span></a>
+            </div>
+            <div class="filter-bar" id="noticeFilters" role="tablist" aria-label="Filter notices by priority"></div>
+            <div class="notice-list" id="noticeList"></div>
+          </section>
+        </div>
+
+        <section class="panel clubs-panel" id="clubs">
+          <div class="panel-heading">
+            <div><span class="eyebrow">FIND YOUR PEOPLE</span><h2>Explore campus communities</h2></div>
+            <a href="#clubs" class="subtle-link" id="viewAllClubs">Explore clubs <span>→</span></a>
+          </div>
+          <div class="club-grid" id="clubGrid"></div>
+        </section>
+
+        <section class="panel faculty-panel" id="faculty">
+          <div class="panel-heading">
+            <div><span class="eyebrow">MENTORS & EDUCATORS</span><h2>Faculty directory</h2></div>
+            <div class="filter-bar compact-filters" id="facultyFilters"></div>
+          </div>
+          <div class="faculty-grid" id="facultyGrid"></div>
+        </section>
+
+        <section class="panel departments-panel" id="departments">
+          <div class="panel-heading"><div><span class="eyebrow">LEARN & GROW</span><h2>Academic departments</h2></div></div>
+          <div class="department-grid" id="departmentGrid"></div>
+        </section>
+      </section>
+
+      <section class="page-section dashboard-section hidden" id="dashboard">
+        <div class="eyebrow">YOUR SPACE</div><h1>My dashboard</h1>
+        <p class="muted">Your campus activity, registrations, and student profile at a glance.</p>
+        <div class="dashboard-profile panel">
+          <div class="avatar avatar-large" id="dashAvatar">PK</div>
+          <div>
+            <h2 id="dashName">Pragya Kumar</h2>
+            <p class="muted" id="dashMeta">Student · Computer Science & Engineering · Sem 5</p>
+            <span class="status-pill">● Active student</span>
+          </div>
+          <button class="outline-button" id="editProfile" type="button">Edit profile</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <div>
+            <div class="section-heading"><div><span class="eyebrow">YOUR ACTIVITY</span><h2>Registered events</h2></div></div>
+            <div class="panel" id="registeredEvents"><p class="empty-state">You haven't registered for any events yet. Explore upcoming events to get started.</p></div>
+          </div>
+          <div>
+            <div class="section-heading"><div><span class="eyebrow">YOUR COMMUNITIES</span><h2>Joined clubs & societies</h2></div></div>
+            <div class="panel" id="joinedClubs"><p class="empty-state">You haven't joined any clubs yet. Click a club card to join.</p></div>
+          </div>
+        </div>
+      </section>
+      <footer><span class="footer-brand">C+ campusconnect</span><span>Built for a more connected campus · Aarambh 2.0</span><span>© 2026 CampusConnect</span></footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+  <dialog class="modal" id="actionModal">
+    <form method="dialog" class="modal-card" id="modalForm">
+      <button class="modal-close" id="modalCloseBtn" type="button" aria-label="Close">×</button>
+      <span class="eyebrow" id="modalEyebrow">CAMPUSCONNECT</span>
+      <h2 id="modalTitle">Title</h2>
+      <p class="muted" id="modalDescription"></p>
+      <div id="modalBody"></div>
+      <div class="modal-actions"><button class="outline-button" id="modalCancelBtn" type="button">Cancel</button><button class="primary-button" id="modalConfirm" type="submit" value="default">Continue <span>→</span></button></div>
+    </form>
+  </dialog>
+  <script src="script.js"></script>
+</body>
+</html>
