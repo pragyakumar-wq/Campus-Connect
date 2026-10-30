@@ -25,6 +25,8 @@
         <a class="nav-link" href="#clubs" data-section="clubs"><span>◈</span> Clubs & Societies</a>
         <a class="nav-link" href="#faculty" data-section="faculty"><span>✦</span> Faculty</a>
         <a class="nav-link" href="#departments" data-section="departments"><span>▥</span> Departments</a>
+        <a class="nav-link" href="#campusMap" data-section="campusMap"><span>◎</span> Campus Map</a>
+        <a class="nav-link" href="#helpboard" data-section="helpboard"><span>⚑</span> Helpboard</a>
       </nav>
       <div class="side-label side-label-lower">PERSONAL</div>
       <nav class="side-nav">
@@ -150,6 +152,28 @@
           <div class="panel-heading"><div><span class="eyebrow">LEARN & GROW</span><h2>Academic departments</h2></div></div>
           <div class="department-grid" id="departmentGrid"></div>
         </section>
+
+        <section class="panel map-panel" id="campusMap">
+          <div class="panel-heading">
+            <div><span class="eyebrow">NAVIGATE CAMPUS</span><h2>Interactive campus map & facility locator</h2></div>
+            <div class="filter-bar compact-filters" id="mapFilters" role="tablist" aria-label="Filter campus zones"></div>
+          </div>
+          <div class="campus-map-layout">
+            <div class="campus-blueprint" id="campusBlueprint" aria-label="Interactive campus blueprint"></div>
+            <div class="map-zone-detail" id="mapZoneDetail"></div>
+          </div>
+        </section>
+
+        <section class="panel helpboard-panel" id="helpboard">
+          <div class="panel-heading">
+            <div><span class="eyebrow">PEER SUPPORT & LOST/FOUND</span><h2>Campus helpboard</h2></div>
+            <div class="panel-actions">
+              <div class="filter-bar compact-filters" id="helpFilters" role="tablist" aria-label="Filter helpboard posts"></div>
+              <button class="mini-action-btn" id="addHelpPostBtn" type="button">+ New post</button>
+            </div>
+          </div>
+          <div class="helpboard-grid" id="helpboardGrid"></div>
+        </section>
       </section>
 
       <section class="page-section dashboard-section hidden" id="dashboard">
@@ -162,7 +186,10 @@
             <p class="muted" id="dashMeta">Student · Computer Science & Engineering · Sem 5</p>
             <span class="status-pill">● Active student</span>
           </div>
-          <button class="outline-button" id="editProfile" type="button">Edit profile</button>
+          <div class="profile-actions">
+            <button class="primary-button" id="eventPassBtn" type="button">View event pass <span>✦</span></button>
+            <button class="outline-button" id="editProfile" type="button">Edit profile</button>
+          </div>
         </div>
 
         <div class="dashboard-grid">
@@ -173,6 +200,20 @@
           <div>
             <div class="section-heading"><div><span class="eyebrow">YOUR COMMUNITIES</span><h2>Joined clubs & societies</h2></div></div>
             <div class="panel" id="joinedClubs"><p class="empty-state">You haven't joined any clubs yet. Click a club card to join.</p></div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div>
+            <div class="section-heading">
+              <div><span class="eyebrow">ACADEMIC ROUTINE</span><h2>Weekly class schedule</h2></div>
+              <div class="filter-bar compact-filters" id="dayFilters" role="tablist" aria-label="Select weekday"></div>
+            </div>
+            <div class="panel" id="timetableList"></div>
+          </div>
+          <div>
+            <div class="section-heading"><div><span class="eyebrow">STUDENT SERVICES</span><h2>Campus quick links</h2></div></div>
+            <div class="panel quick-links-grid" id="quickLinksGrid"></div>
           </div>
         </div>
       </section>

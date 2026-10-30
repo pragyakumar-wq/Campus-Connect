@@ -139,6 +139,18 @@ function getFilteredFaculty() {
   });
 }
 
+function getCountdownLabel(dayStr, monthStr) {
+  const months = {JAN:0,FEB:1,MAR:2,APR:3,MAY:4,JUN:5,JUL:6,AUG:7,SEP:8,OCT:9,NOV:10,DEC:11};
+  const m = months[(monthStr || "NOV").toUpperCase()] ?? 10;
+  const d = parseInt(dayStr, 10) || 4;
+  const target = new Date(2026, m, d);
+  const now = new Date(2026, 9, 30);
+  const diff = Math.round((target - now) / (1000 * 60 * 60 * 24));
+  if (diff <= 0) return "Today";
+  if (diff === 1) return "Tomorrow";
+  return `In ${diff} days`;
+}
+
 function renderEvents(list = getFilteredEvents()) {
   if (!list.length) {
     eventList.innerHTML = `<p class="empty-state">No events match your current filter.</p>`;
@@ -147,7 +159,11 @@ function renderEvents(list = getFilteredEvents()) {
   eventList.innerHTML = list.map(e =>
     `<article class="event-item">
       <div class="event-date"><b>${e.day}</b><small>${e.month}</small></div>
-      <div class="event-info"><strong>${e.title}</strong><small>◷ ${e.time} &nbsp; · &nbsp; ◉ ${e.venue}</small></div>
+      <button type="button" class="event-info-btn" data-event-detail="${e.id}">
+        <strong>${e.title}</strong>
+        <small>◷ ${e.time} &nbsp; · &nbsp; ◉ ${e.venue}</small>
+      </button>
+      <span class="countdown-badge">${getCountdownLabel(e.day, e.month)}</span>
       <span class="event-category">${e.category}</span>
       <button type="button" class="register-btn ${registered.has(e.id) ? "registered" : ""}" data-register="${e.id}">${registered.has(e.id) ? "Joined ✓" : "Join"}</button>
     </article>`
@@ -544,6 +560,8 @@ function searchAll(query) {
   renderNotices();
   renderClubs();
   renderFaculty();
+  if (typeof renderHelpboard === "function") renderHelpboard();
+  if (typeof renderCampusMap === "function") renderCampusMap();
 }
 
 $("#globalSearch").addEventListener("input", e => {
@@ -683,3 +701,399 @@ $("#addNoticeBtn").addEventListener("click", () => {
     "CAMPUS BULLETIN"
   );
 });
+const weeklyTimetable = {
+  MON: [
+    {time:"09:00 AM", subject:"Data Structures & Algorithms", prof:"Dr. Arindam Chatterjee", room:"Block A · 204"},
+    {time:"11:00 AM", subject:"Full-Stack Web Development Lab", prof:"Dr. Nidhi Sharma", room:"Web Studio · 102"},
+    {time:"02:00 PM", subject:"Operating Systems", prof:"Prof. Vivek Sinha", room:"Block A · 208"}
+  ],
+  TUE: [
+    {time:"10:00 AM", subject:"Database Management Systems", prof:"Dr. Nidhi Sharma", room:"Block A · 210"},
+    {time:"01:30 PM", subject:"Computer Networks", prof:"Dr. Arindam Chatterjee", room:"Block A · 204"},
+    {time:"04:30 PM", subject:"Robotics & IoT Open Lab", prof:"Club Activity", room:"Innovation Lab"}
+  ],
+  WED: [
+    {time:"09:00 AM", subject:"Artificial Intelligence Foundations", prof:"Dr. Arindam Chatterjee", room:"AI Lab · 301"},
+    {time:"11:30 AM", subject:"Software Engineering", prof:"Prof. Vivek Sinha", room:"Seminar Hall 2"}
+  ],
+  THU: [
+    {time:"10:00 AM", subject:"Cloud Computing Architecture", prof:"Dr. Nidhi Sharma", room:"Block A · 210"},
+    {time:"02:00 PM", subject:"Mini Project Mentorship", prof:"Department Faculty", room:"Innovation Lab"}
+  ],
+  FRI: [
+    {time:"09:30 AM", subject:"Cybersecurity & Cryptography", prof:"Prof. Vivek Sinha", room:"Block A · 105"},
+    {time:"02:00 PM", subject:"Aarambh 2.0 Hackathon Sprint", prof:"Innovation Cell", room:"Main Auditorium"}
+  ]
+};
+
+const quickLinks = [
+  {id:"exam", icon:"▤", title:"Exam Seat & Schedule", sub:"Mid-Sem & End-Sem Hall Tickets", body:"<strong>Upcoming Assessment:</strong> Mid-Semester Examinations begin 16 Nov 2026.<br><br><strong>Allocated Room:</strong> Block A, Examination Hall 202 (Seat #C-14).<br><strong>Reporting Time:</strong> 9:30 AM with Student ID Card."},
+  {id:"library", icon:"◈", title:"Digital Library Pass", sub:"2 Books Issued · 0 Overdue", body:"<strong>Student Library ID:</strong> LIB-2026-PK09<br><br><strong>Currently Issued:</strong><br>• <em>Clean Code</em> — Due 14 Nov 2026<br>• <em>Designing Data-Intensive Applications</em> — Due 21 Nov 2026"},
+  {id:"hostel", icon:"⌂", title:"Campus Mess & Cafeteria", sub:"Today's Menu & Timings", body:"<strong>Today's Special:</strong> Paneer Butter Masala, Jeera Rice, Dal Tadka & Salad.<br><br><strong>Timings:</strong> Breakfast (7:30–9:00 AM) · Lunch (12:30–2:15 PM) · Snacks (5:00 PM) · Dinner (7:45–9:15 PM)."},
+  {id:"calendar", icon:"▦", title:"Academic Calendar", sub:"Holidays & Key Semester Dates", body:"<strong>Nov 04–22:</strong> Campus Tech & Cultural Fest Window<br><strong>Nov 16–24:</strong> Mid-Semester Theory Exams<br><strong>Dec 10–18:</strong> Final Project Viva & Exhibitions<br><strong>Dec 22:</strong> Winter Semester Break Starts"}
+];
+
+let activeTimetableDay = "MON";
+
+function renderTimetable() {
+  const days = ["MON", "TUE", "WED", "THU", "FRI"];
+  const dayBox = $("#dayFilters");
+  if (dayBox) {
+    dayBox.innerHTML = days.map(d =>
+      `<button type="button" class="filter-chip ${activeTimetableDay === d ? "active" : ""}" data-day-tab="${d}">${d}</button>`
+    ).join("");
+  }
+  const listBox = $("#timetableList");
+  if (listBox) {
+    const slots = weeklyTimetable[activeTimetableDay] || [];
+    listBox.innerHTML = slots.map(s =>
+      `<div class="timetable-item">
+        <span class="timetable-time">${s.time}</span>
+        <div class="timetable-subject"><strong>${s.subject}</strong><small>${s.prof}</small></div>
+        <span class="timetable-room">${s.room}</span>
+      </div>`
+    ).join("");
+  }
+}
+
+function renderQuickLinks() {
+  const grid = $("#quickLinksGrid");
+  if (!grid) return;
+  grid.innerHTML = quickLinks.map(q =>
+    `<button type="button" class="quick-link-card" data-quick-link="${q.id}">
+      <span class="quick-link-icon">${q.icon}</span>
+      <strong>${q.title}</strong>
+      <small>${q.sub} →</small>
+    </button>`
+  ).join("");
+}
+
+document.addEventListener("click", e => {
+  const evDetail = e.target.closest("[data-event-detail]");
+  if (evDetail) {
+    const ev = events.find(x => x.id === Number(evDetail.dataset.eventDetail));
+    if (!ev) return;
+    const isReg = registered.has(ev.id);
+    openModal(
+      ev.title,
+      `${ev.category} · ${getCountdownLabel(ev.day, ev.month)}`,
+      `<p style="font-size:12px;line-height:1.7;color:#687387;margin-top:8px">${ev.desc}</p>
+       <div style="display:grid;gap:7px;margin-top:12px;font-size:12px;color:#4a5568;background:#f7f8fc;padding:12px;border-radius:8px">
+         <div><strong>Date & Time:</strong> ${ev.date} at ${ev.time}</div>
+         <div><strong>Venue:</strong> ${ev.venue}</div>
+         <div><strong>Registration Status:</strong> ${isReg ? "Registered ✓" : "Open for students"}</div>
+       </div>`,
+      isReg ? "Cancel registration" : "Register now",
+      () => {
+        if (isReg) {
+          registered.delete(ev.id);
+          toast("Event registration cancelled.");
+        } else {
+          registered.add(ev.id);
+          toast(`Registered for ${ev.title}!`);
+        }
+        saveStorage("cc_registered", [...registered]);
+        renderEvents();
+        renderDashboard();
+      },
+      "EVENT DETAILS"
+    );
+    return;
+  }
+
+  const dayTab = e.target.closest("[data-day-tab]");
+  if (dayTab) {
+    activeTimetableDay = dayTab.dataset.dayTab;
+    renderTimetable();
+    return;
+  }
+
+  const qLink = e.target.closest("[data-quick-link]");
+  if (qLink) {
+    const item = quickLinks.find(x => x.id === qLink.dataset.quickLink);
+    if (!item) return;
+    openModal(
+      item.title,
+      item.sub,
+      `<div style="margin-top:12px;font-size:12px;line-height:1.7;color:#4a5568;background:#f7f8fc;padding:12px;border-radius:8px">${item.body}</div>`,
+      "Close",
+      () => {},
+      "STUDENT SERVICES"
+    );
+  }
+});
+
+renderTimetable();
+renderQuickLinks();
+const defaultHelpPosts = [
+  {id:101,category:"LOST & FOUND",title:"Found calculator in Seminar Hall 2",desc:"Casio fx-991EX scientific calculator left on row 3 after the Design Thinking Workshop.",author:"Aman (ECE · Sem 3)",contact:"Desk #2, Innovation Lab"},
+  {id:102,category:"STUDY GROUP",title:"Need 1 teammate for CodeSprint 2026",desc:"We have 2 backend/UI builders and are looking for someone comfortable with JavaScript or Python.",author:"Riya (CSE · Sem 5)",contact:"Coding Club Lounge · 4 PM"},
+  {id:103,category:"ASK SENIORS",title:"Tips for Mid-Sem DSA & OS practicals?",desc:"Looking for previous year lab viva questions and reference notes for Semester 5 CSE.",author:"Karan (CSE · Sem 5)",contact:"Central Library Reading Room"}
+];
+
+const customHelpPosts = loadStorage("cc_help_posts", []);
+const helpPosts = [...customHelpPosts, ...defaultHelpPosts];
+let activeHelpCat = "ALL";
+
+function renderHelpFilters() {
+  const cats = ["ALL", "LOST & FOUND", "STUDY GROUP", "ASK SENIORS"];
+  const box = $("#helpFilters");
+  if (!box) return;
+  box.innerHTML = cats.map(c =>
+    `<button type="button" class="filter-chip ${activeHelpCat === c ? "active" : ""}" data-help-cat="${c}">${c === "ALL" ? "All" : c}</button>`
+  ).join("");
+}
+
+function renderHelpboard() {
+  const grid = $("#helpboardGrid");
+  if (!grid) return;
+  const q = currentSearchQuery.toLowerCase();
+  const filtered = helpPosts.filter(p => {
+    const matchCat = activeHelpCat === "ALL" || p.category === activeHelpCat;
+    const matchQ = !q || (p.title + p.desc + p.author + p.category).toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+  if (!filtered.length) {
+    grid.innerHTML = `<p class="empty-state">No helpboard posts match this filter.</p>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(p => {
+    const tagClass = p.category === "LOST & FOUND" ? "lost" : (p.category === "STUDY GROUP" ? "study" : "");
+    return `<article class="helpboard-card">
+      <div class="helpboard-top">
+        <span class="help-tag ${tagClass}">${p.category}</span>
+        <small style="font-size:9px;color:#9aa2b1">${p.author}</small>
+      </div>
+      <strong>${p.title}</strong>
+      <p>${p.desc}</p>
+      <div class="helpboard-footer">
+        <span>📍 ${p.contact}</span>
+        <button type="button" data-help-reply="${p.id}">Respond →</button>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function copyTextSafe(text) {
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+$("#addHelpPostBtn").addEventListener("click", () => {
+  openModal(
+    "Post to Campus Helpboard",
+    "Report a lost/found item, find study partners, or ask peers a question.",
+    `<input class="modal-field" id="helpTitleInput" placeholder="Headline (e.g. Lost Blue Water Bottle in Library)">
+     <div class="modal-row">
+       <select class="modal-field" id="helpCatInput">
+         <option value="LOST & FOUND">LOST & FOUND</option>
+         <option value="STUDY GROUP">STUDY GROUP</option>
+         <option value="ASK SENIORS">ASK SENIORS</option>
+       </select>
+       <input class="modal-field" id="helpContactInput" placeholder="Meetup spot / Contact info">
+     </div>
+     <textarea class="modal-field" id="helpDescInput" rows="3" placeholder="Add helpful details..."></textarea>`,
+    "Publish post",
+    () => {
+      const title = $("#helpTitleInput").value.trim();
+      const category = $("#helpCatInput").value;
+      const contact = $("#helpContactInput").value.trim() || "Student Activity Center";
+      const desc = $("#helpDescInput").value.trim() || "Reach out on campus to connect regarding this post.";
+      if (!title) {
+        toast("Please enter a post headline.");
+        return;
+      }
+      const newPost = {
+        id: Date.now(),
+        category,
+        title,
+        desc,
+        author: `${profile.name.split(" ")[0]} (${profile.sem})`,
+        contact
+      };
+      helpPosts.unshift(newPost);
+      customHelpPosts.unshift(newPost);
+      saveStorage("cc_help_posts", customHelpPosts);
+      activeHelpCat = "ALL";
+      renderHelpFilters();
+      renderHelpboard();
+      toast("Your post is now live on the Campus Helpboard!");
+    },
+    "PEER HELPBOARD"
+  );
+});
+
+$("#eventPassBtn").addEventListener("click", () => {
+  const chosenEvents = events.filter(e => registered.has(e.id));
+  const chosenClubs = clubs.filter(c => joinedClubIds.has(c.id));
+  const evLines = chosenEvents.length
+    ? chosenEvents.map(e => `• ${e.title} (${e.date} · ${e.venue})`).join("<br>")
+    : "• No events registered yet";
+  const clLines = chosenClubs.length
+    ? chosenClubs.map(c => c.name).join(", ")
+    : "None joined yet";
+  const summaryText = `CAMPUSCONNECT PASS [CC-2026-PK09]\nStudent: ${profile.name} (${profile.dept}, ${profile.sem})\nRegistered Events: ${chosenEvents.map(e => e.title + " on " + e.date).join("; ") || "None"}\nClubs: ${clLines}`;
+  openModal(
+    "Digital Student Event Pass",
+    "Show this pass at campus venues or copy your schedule summary.",
+    `<div class="pass-ticket">
+       <div class="pass-header">
+         <div>
+           <strong style="font-size:14px;display:block">${profile.name}</strong>
+           <small style="color:#c6b8ff;font-size:10px">${profile.dept} · ${profile.sem}</small>
+         </div>
+         <span class="pass-id">CC-2026-PK09</span>
+       </div>
+       <div class="pass-list">
+         <strong style="color:#c6b8ff;font-size:10px;letter-spacing:1px">REGISTERED EVENTS (${chosenEvents.length})</strong><br>
+         ${evLines}
+         <br><br>
+         <strong style="color:#c6b8ff;font-size:10px;letter-spacing:1px">ACTIVE CLUBS (${chosenClubs.length})</strong><br>
+         ${clLines}
+       </div>
+     </div>`,
+    "Copy pass summary",
+    () => {
+      copyTextSafe(summaryText);
+      toast("Event pass summary copied to clipboard!");
+    },
+    "VERIFIED STUDENT PASS"
+  );
+});
+
+document.addEventListener("click", e => {
+  const hCat = e.target.closest("[data-help-cat]");
+  if (hCat) {
+    activeHelpCat = hCat.dataset.helpCat;
+    renderHelpFilters();
+    renderHelpboard();
+    return;
+  }
+
+  const hReply = e.target.closest("[data-help-reply]");
+  if (hReply) {
+    const post = helpPosts.find(p => p.id === Number(hReply.dataset.helpReply));
+    if (!post) return;
+    openModal(
+      `Respond: ${post.title}`,
+      `Posted by ${post.author} · ${post.category}`,
+      `<p style="font-size:12px;color:#687387;margin-top:6px">${post.desc}</p>
+       <input class="modal-field" id="helpReplyInput" placeholder="Write a quick reply or contact note...">`,
+      "Send response",
+      () => {
+        const msg = $("#helpReplyInput").value.trim();
+        toast(msg ? `Response sent to ${post.author}!` : `Pinged ${post.author} regarding "${post.title}".`);
+      },
+      "HELPBOARD RESPONSE"
+    );
+  }
+});
+
+renderHelpFilters();
+renderHelpboard();
+const campusZones = [
+  {id:"zone-a",code:"ZONE A · NORTH",category:"ACADEMIC",name:"Block A & Innovation Lab",venueMatch:"Innovation Lab",hours:"8:00 AM – 8:00 PM",floors:"G: Innovation Lab · 1F: Web Studio · 2F: CSE Classrooms & AI Lab",facilities:"High-Speed Wi-Fi, 3D Printer Bay, Projector Rooms",status:"Open · 2 Active Events"},
+  {id:"zone-b",code:"ZONE B · EAST",category:"ACADEMIC",name:"Blocks B, C & Seminar Halls",venueMatch:"Seminar Hall 2",hours:"8:00 AM – 6:00 PM",floors:"G: Seminar Hall 1 & 2 · 1F: Electrical Labs · 2F: ECE & VLSI Studio",facilities:"Smart Podiums, 180-Seat Seminar Hall, Faculty Cabins",status:"Open · Workshop Venue"},
+  {id:"zone-lib",code:"ZONE C · CENTER",category:"AMENITIES",name:"Central Library & Digital Hub",venueMatch:"Library",hours:"8:00 AM – 8:00 PM (Digital Lab 24×7)",floors:"G: Circulation & Periodicals · 1F: Quiet Reading Hall · 2F: E-Library",facilities:"50,000+ Volumes, Group Discussion Pods, Printing Kiosk",status:"Open · Quiet Hours Active"},
+  {id:"zone-aud",code:"ZONE D · WEST",category:"LABS & VENUES",name:"Main Auditorium & Open Air Theatre",venueMatch:"Auditorium",hours:"9:00 AM – 9:00 PM",floors:"Main Stage (800 Seats) · Open Air Amphitheatre (1,200 Capacity)",facilities:"Dolby Acoustics, Green Rooms, Live Streaming Rig",status:"Open · Aarambh 2.0 Demo Venue"},
+  {id:"zone-spo",code:"ZONE E · SOUTH",category:"LABS & VENUES",name:"College Ground & Sports Complex",venueMatch:"College Ground",hours:"6:00 AM – 8:30 PM",floors:"Outdoor Football & Cricket Turf · Indoor Badminton & Gym Arena",facilities:"Floodlights, Equipment Locker, First-Aid Kiosk",status:"Open · Football Practice 4 PM"},
+  {id:"zone-hub",code:"ZONE F · GATE 1",category:"AMENITIES",name:"Student Activity Center, Cafeteria & Medical",venueMatch:"Main Gate",hours:"7:30 AM – 9:30 PM (Medical 24×7)",floors:"G: Campus Cafeteria & Helpdesk · 1F: Club Lounges & Music Room",facilities:"24×7 Medical & Ambulance, ATM, Stationery Shop, Club Rooms",status:"Open · All Services Active"}
+];
+
+let activeMapCat = "ALL";
+let selectedZoneId = "zone-a";
+
+function renderMapFilters() {
+  const cats = ["ALL", "ACADEMIC", "LABS & VENUES", "AMENITIES"];
+  const box = $("#mapFilters");
+  if (!box) return;
+  box.innerHTML = cats.map(c =>
+    `<button type="button" class="filter-chip ${activeMapCat === c ? "active" : ""}" data-map-cat="${c}">${c === "ALL" ? "All Zones" : c}</button>`
+  ).join("");
+}
+
+function renderCampusMap() {
+  const bp = $("#campusBlueprint");
+  const detail = $("#mapZoneDetail");
+  if (!bp || !detail) return;
+  const q = currentSearchQuery.toLowerCase();
+  const visible = campusZones.filter(z => {
+    const matchCat = activeMapCat === "ALL" || z.category === activeMapCat;
+    const matchQ = !q || (z.name + z.floors + z.facilities + z.code).toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  if (!visible.length) {
+    bp.innerHTML = `<p class="empty-state" style="grid-column:1/-1">No campus zones match this filter.</p>`;
+    detail.innerHTML = `<p class="empty-state">Select a filter to view building details.</p>`;
+    return;
+  }
+
+  if (!visible.some(z => z.id === selectedZoneId)) {
+    selectedZoneId = visible[0].id;
+  }
+
+  bp.innerHTML = visible.map(z =>
+    `<button type="button" class="map-pin ${z.id === selectedZoneId ? "active" : ""}" data-zone-id="${z.id}">
+      <span class="map-pin-code">${z.code}</span>
+      <strong>${z.name}</strong>
+      <small>${z.status}</small>
+    </button>`
+  ).join("");
+
+  const activeZone = campusZones.find(z => z.id === selectedZoneId) || visible[0];
+  detail.innerHTML = `
+    <div>
+      <span class="eyebrow">${activeZone.code} · ${activeZone.category}</span>
+      <h3>${activeZone.name}</h3>
+      <div class="map-meta-list">
+        <div><strong>🕒 Timings:</strong> ${activeZone.hours}</div>
+        <div><strong>🏢 Floor Guide:</strong> ${activeZone.floors}</div>
+        <div><strong>✦ Key Facilities:</strong> ${activeZone.facilities}</div>
+        <div><strong>● Status:</strong> <span style="color:#39a77b;font-weight:700">${activeZone.status}</span></div>
+      </div>
+    </div>
+    <button type="button" class="primary-button" data-zone-events="${activeZone.venueMatch}">Show events near this zone <span>→</span></button>
+  `;
+}
+
+document.addEventListener("click", e => {
+  const mCat = e.target.closest("[data-map-cat]");
+  if (mCat) {
+    activeMapCat = mCat.dataset.mapCat;
+    renderMapFilters();
+    renderCampusMap();
+    return;
+  }
+
+  const zPin = e.target.closest("[data-zone-id]");
+  if (zPin) {
+    selectedZoneId = zPin.dataset.zoneId;
+    renderCampusMap();
+    return;
+  }
+
+  const zEv = e.target.closest("[data-zone-events]");
+  if (zEv) {
+    const venueKeyword = zEv.dataset.zoneEvents;
+    activeEventCategory = "ALL";
+    $("#globalSearch").value = venueKeyword;
+    searchAll(venueKeyword);
+    document.getElementById("events").scrollIntoView({behavior:"smooth"});
+    toast(`Filtered campus items for "${venueKeyword}"`);
+  }
+});
+
+renderMapFilters();
+renderCampusMap();
